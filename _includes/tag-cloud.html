@@ -1,0 +1,14 @@
+{% assign tags = site.tags | sort %}
+<div class="tag-cloud">
+  <h3>タグクラウド</h3>
+  {% for tag in tags %}
+    {% assign tag_size = tag[1] | size %}
+    {% assign font_size = tag_size | times: 0.5 | plus: 1 %}
+    {% if font_size > 2 %}{% assign font_size = 2 %}{% endif %}
+    <a href="{{ '/tags/' | relative_url }}#{{ tag[0] | slugify }}" 
+       class="tag-cloud-item" 
+       style="font-size: {{ font_size }}em;">
+      {{ tag[0] }}
+    </a>
+  {% endfor %}
+</div>

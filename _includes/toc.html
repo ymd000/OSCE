@@ -1,0 +1,84 @@
+<!-- 目次セクション -->
+<div class="sidebar-section">
+  <h3 class="sidebar-title">目次</h3>
+  <nav id="toc-nav" class="toc-nav">
+    <div id="toc-container">
+      <!-- JavaScript で目次を動的生成 -->
+    </div>
+  </nav>
+</div>
+
+<!-- タグ一覧 -->
+<div class="sidebar-section">
+  <h3 class="sidebar-title">この記事のタグ</h3>
+  {% if page.tags.size > 0 %}
+    <div class="post-tags-cloud">
+      {% for tag in page.tags %}
+        <a href="{{ '/tags/' | relative_url }}#{{ tag | slugify }}" class="post-tag-item" title="{{ tag }}に関する他の記事を見る">
+          {{ tag }}
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="no-tags">タグはありません</p>
+  {% endif %}
+</div>
+
+<!-- 関連記事（タグが共通の記事を表示） -->
+{% if page.tags.size > 0 and site.posts.size > 1 %}
+<div class="sidebar-section">
+  <h3 class="sidebar-title">関連記事</h3>
+  <div class="related-posts">
+    {% assign related_posts = "" | split: "," %}
+    {% assign max_related = 3 %}
+    
+    {% for post in site.posts %}
+      {% unless post.url == page.url %}
+        {% assign common_tags = 0 %}
+        {% for tag in post.tags %}
+          {% if page.tags contains tag %}
+            {% assign common_tags = common_tags | plus: 1 %}
+          {% endif %}
+        {% endfor %}
+        {% if common_tags > 0 %}
+          {% assign related_posts = related_posts | push: post %}
+          {% if related_posts.size >= max_related %}
+            {% break %}
+          {% endif %}
+        {% endif %}
+      {% endunless %}
+    {% endfor %}
+    
+    {% if related_posts.size == 0 %}
+      <!-- タグ関連がない場合は最新記事を表示 -->
+      {% for post in site.posts limit: max_related %}
+        {% unless post.url == page.url %}
+          {% assign related_posts = related_posts | push: post %}
+        {% endunless %}
+      {% endfor %}
+    {% endif %}
+    
+    {% for post in related_posts limit: max_related %}
+      <article class="related-post-item">
+        <h4><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h4>
+        <time class="related-post-date">{{ post.date | date: "%Y年%m月%d日" }}</time>
+        {% if post.excerpt %}
+          <p class="related-post-excerpt">{{ post.excerpt | strip_html | truncatewords: 10 }}</p>
+        {% endif %}
+      </article>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<!-- ナビゲーション -->
+<div class="sidebar-section">
+  <h3 class="sidebar-title">ナビゲーション</h3>
+  <nav class="sidebar-nav">
+    <ul>
+      <li><a href="{{ '/' | relative_url }}">← ホームに戻る</a></li>
+      <li><a href="{{ '/script/' | relative_url }}">← スクリプト一覧</a></li>
+      <li><a href="{{ '/search/' | relative_url }}">検索</a></li>
+    </ul>
+  </nav>
+</div>

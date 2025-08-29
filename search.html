@@ -1,0 +1,134 @@
+---
+layout: default
+title: 検索
+permalink: /search/
+---
+
+<h1>{{ page.title }}</h1>
+
+<div class="search-container">
+  <input type="text" id="search-input" class="search-input" placeholder="検索キーワードを入力してください..." autocomplete="off">
+</div>
+
+<div id="search-results" class="search-results" style="display: none;">
+  <h3>検索結果</h3>
+  <div id="search-results-list"></div>
+</div>
+
+<script>
+let searchData = [];
+let searchInput = document.getElementById('search-input');
+let searchResults = document.getElementById('search-results');
+let searchResultsList = document.getElementById('search-results-list');
+
+// 検索データを読み込み
+fetch('{{ "/search.json" | relative_url }}')
+  .then(response => response.json())
+  .then(data => {
+    searchData = data;
+  })
+  .catch(error => {
+    console.error('検索データの読み込みに失敗しました:', error);
+  });
+
+// 検索実行
+function performSearch(query) {
+  if (!query.trim()) {
+    searchResults.style.display = 'none';
+    return;
+  }
+
+  const results = searchData.filter(post => {
+    const searchText = (post.title + ' ' + post.content + ' ' + post.tags.join(' ')).toLowerCase();
+    return searchText.includes(query.toLowerCase());
+  });
+
+  displayResults(results, query);
+}
+
+// 結果表示
+function displayResults(results, query) {
+  if (results.length === 0) {
+    searchResultsList.innerHTML = '<div class="no-results">「' + query + '」に関する記事が見つかりませんでした。</div>';
+  } else {
+    searchResultsList.innerHTML = results.map(post => {
+      const highlightedTitle = highlightText(post.title, query);
+      const highlightedExcerpt = highlightText(post.excerpt, query);
+      
+      return `
+        <div class="search-result-item">
+          <h3><a href="${post.url}">${highlightedTitle}</a></h3>
+          <div class="search-result-meta">
+            ${post.date} | タグ: ${post.tags.join(', ')}
+          </div>
+          <div class="search-result-excerpt">${highlightedExcerpt}</div>
+        </div>
+      `;
+    }).join('');
+  }
+  
+  searchResults.style.display = 'block';
+}
+
+// テキストハイライト
+function highlightText(text, query) {
+  if (!query.trim()) return text;
+  
+  const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+  return text.replace(regex, '<mark>$1</mark>');
+}
+
+// イベントリスナー
+searchInput.addEventListener('input', function() {
+  performSearch(this.value);
+});
+
+// URLパラメータから検索クエリを取得
+const urlParams = new URLSearchParams(window.location.search);
+const queryParam = urlParams.get('q');
+if (queryParam) {
+  searchInput.value = queryParam;
+  performSearch(queryParam);
+}
+</script>
+
+<style>
+mark {
+  background-color: #ffeb3b;
+  padding: 0 2px;
+}
+
+.search-result-item {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item h3 {
+  margin: 0 0 5px 0;
+}
+
+.search-result-item h3 a {
+  color: #0066cc;
+  text-decoration: none;
+}
+
+.search-result-item h3 a:hover {
+  text-decoration: underline;
+}
+
+.search-result-meta {
+  color: #666;
+  font-size: 0.9em;
+  margin-bottom: 8px;
+}
+
+.search-result-excerpt {
+  line-height: 1.5;
+  color: #333;
+}
+</style>
