@@ -23,8 +23,8 @@ email: your-email@example.com
 description: >- # this means to ignore newlines until "baseurl:"
   OSCEで使用するスクリプトを集めたサイトです。様々なスクリプトを
   整理・保存し、検索可能な形で提供します。
-baseurl: "" # the subpath of your site, e.g. /script
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+baseurl: "/OSCE" # the subpath of your site, e.g. /script
+url: "https://ymd000.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 twitter_username: jekyllrb
 github_username:  jekyll
 
