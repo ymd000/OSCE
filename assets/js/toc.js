@@ -28,8 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // 目次生成関数
 function generateTOC(headings) {
   const tocContainer = document.getElementById('toc-container');
-  let tocHTML = '<ul class="toc-list">';
-  let prevLevel = 0;
+  let tocHTML = '<div class="toc-list">';
   
   headings.forEach((heading, index) => {
     const level = parseInt(heading.tagName.charAt(1));
@@ -41,37 +40,16 @@ function generateTOC(headings) {
       heading.id = id;
     }
     
-    // 階層の調整
-    if (level > prevLevel) {
-      // 新しい階層を開始
-      for (let i = prevLevel; i < level - 1; i++) {
-        tocHTML += '<li><ul class="toc-list">';
-      }
-      if (prevLevel > 0) tocHTML += '<li>';
-    } else if (level < prevLevel) {
-      // 階層を閉じる
-      for (let i = level; i < prevLevel; i++) {
-        tocHTML += '</ul></li>';
-      }
-    } else if (prevLevel > 0) {
-      // 同じ階層
-      tocHTML += '</li>';
-    }
-    
-    // 目次項目を追加
-    tocHTML += `<li class="toc-item toc-level-${level}">
+    // 目次項目を追加（リストを使わずdivで構成）
+    const indent = (level - 1) * 15; // レベルに応じてインデント
+    tocHTML += `<div class="toc-item toc-level-${level}" style="padding-left: ${indent}px;">
       <a href="#${heading.id}" class="toc-link" data-level="${level}">
         ${escapeHtml(text)}
-      </a>`;
-    
-    prevLevel = level;
+      </a>
+    </div>`;
   });
   
-  // 残りの階層を閉じる
-  for (let i = 1; i < prevLevel; i++) {
-    tocHTML += '</ul></li>';
-  }
-  tocHTML += '</li></ul>';
+  tocHTML += '</div>';
   
   tocContainer.innerHTML = tocHTML;
   

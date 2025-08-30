@@ -1206,16 +1206,40 @@
   background: #d1d8dd;
 }
 
-/* 目次リスト */
-.toc-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+/* 目次リスト - 強制的にリストマーカーを削除 */
+#toc-container ul,
+#toc-container ol,
+.toc-list,
+.toc-nav ul,
+.toc-nav ol {
+  list-style: none !important;
+  list-style-type: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
   line-height: 1.4;
 }
 
+#toc-container li,
+.toc-list li,
+.toc-nav li {
+  list-style: none !important;
+  list-style-type: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  position: relative;
+}
+
+#toc-container li::before,
+.toc-list li::before,
+.toc-nav li::before {
+  display: none !important;
+  content: none !important;
+}
+
 .toc-list .toc-list {
-  margin-left: 15px;
+  list-style: none !important;
+  list-style-type: none !important;
+  margin-left: 15px !important;
   margin-top: 4px;
   padding-left: 8px;
   border-left: 2px solid #f0f0f0;
