@@ -1,6 +1,7 @@
 ---
 layout: home
 title: ホーム
+list_title: Scripts
 ---
 
 {% include search-box.html %}
